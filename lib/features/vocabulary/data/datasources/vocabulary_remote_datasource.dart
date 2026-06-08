@@ -13,7 +13,7 @@ class VocabularyRemoteDataSourceImpl implements VocabularyRemoteDataSource {
   final http.Client client;
 
   // Use 10.0.2.2 for Android Emulator, or localhost / IP for Linux desktop build
-  final String nodeBaseUrl = 'http://10.0.2.2:3000';
+  final String nodeBaseUrl = 'http://192.168.29.217:3000';
 
   VocabularyRemoteDataSourceImpl({required this.firestore, required this.client});
 

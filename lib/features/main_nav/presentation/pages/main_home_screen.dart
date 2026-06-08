@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../vocabulary/presentation/pages/progress_tab.dart';
 import '../cubit/navigation_cubit.dart';
 import '../widgets/bottom_nav_chips.dart';
 import '../widgets/top_user_bar.dart';
