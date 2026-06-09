@@ -77,7 +77,30 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Icon(Icons.cloud_circle_rounded, size: 80, color: theme.primaryColor),
+                            // Floating App Logo
+                            Center(
+                              child: Container(
+                                height: 80,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: theme.primaryColor.withOpacity(0.3),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.asset(
+                                    'assets/logo.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 24),
                             Text(
                               "Welcome to LingoBreeze",

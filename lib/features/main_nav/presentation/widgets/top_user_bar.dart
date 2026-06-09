@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/theme_cubit.dart';
+import '../../../../core/theme/glass_container.dart';
 import '../../../../core/theme/theme_toggle_widget.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 
@@ -67,54 +67,58 @@ class TopUserBar extends StatelessWidget {
                   builder: (BuildContext dialogContext) {
                     final dialogTheme = Theme.of(context);
 
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24), // Matches your card styling
-                      ),
-                      backgroundColor: dialogTheme.cardColor,
-                      title: Text(
-                        "Log Out",
-                        style: dialogTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      content: Text(
-                        "Are you sure you want to log out of LingoBreeze?",
-                        style: dialogTheme.textTheme.bodyLarge,
-                      ),
-                      actionsPadding: const EdgeInsets.only(right: 16, bottom: 16),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(dialogContext), // Just close the dialog
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(
-                              color: dialogTheme.textTheme.bodyMedium?.color,
-                              fontSize: 16,
+                    return Dialog(
+                      backgroundColor: Colors.transparent, // Hides the default solid box
+                      elevation: 0,
+                      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: GlassContainer(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.logout_rounded, size: 48, color: Colors.redAccent.withOpacity(0.8)),
+                            const SizedBox(height: 16),
+                            Text(
+                              "Log Out",
+                              style: dialogTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                             ),
-                          ),
+                            const SizedBox(height: 12),
+                            Text(
+                              "Are you sure you want to log out of LingoBreeze?",
+                              style: dialogTheme.textTheme.bodyMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 32),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextButton(
+                                    onPressed: () => Navigator.pop(dialogContext),
+                                    child: Text("Cancel", style: TextStyle(color: dialogTheme.textTheme.bodyMedium?.color, fontSize: 16)),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(dialogContext);
+                                      context.read<AuthBloc>().add(LogoutRequested());
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent,
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                      elevation: 8,
+                                      shadowColor: Colors.redAccent.withOpacity(0.4),
+                                    ),
+                                    child: const Text("Log Out", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(dialogContext); // Close the dialog first
-                            context.read<AuthBloc>().add(LogoutRequested()); // Then trigger the logout event
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent, // Highlights the destructive action
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: const Text(
-                            "Log Out",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     );
                   },
                 );
