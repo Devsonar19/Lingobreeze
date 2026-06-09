@@ -1,5 +1,4 @@
 # LingoBreeze
-![LingoBreeze Banner](https://via.placeholder.com/1200x400/1A1A2E/FFFFFF?text=LingoBreeze+-+Master+Your+Vocabulary)
 
 **LingoBreeze** is a premium, beautifully crafted vocabulary building and flashcard application built with Flutter. It features a stunning "frosted glass" (glassmorphism) aesthetic, robust state management using BLoC, and seamless cloud synchronization with Firebase.
 
@@ -9,9 +8,9 @@
 |:----------------------------------------------------:|:-----------------------------------------------------:|:--------------------------------------------------------:|
 |       <img src="assets/home.jpeg" width="250">       |       <img src="assets/learn.jpeg" width="250">       |       <img src="assets/progress.jpeg" width="250">       |
 
-|               Login Screen                |                     Add Word Modal                      |                   Delete Dialog                   |
-|:-----------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------:|
-| <img src="assets/login.jpeg" width="250"> |      <img src="assets/add_modal.png" width="250">       | <img src="assets/delete_dialog.jpeg" width="250"> |
+|               Login Screen                |                Add Word Modal                 |                   Delete Dialog                   |
+|:-----------------------------------------:|:---------------------------------------------:|:-------------------------------------------------:|
+| <img src="assets/login.jpeg" width="250"> | <img src="assets/add_modal.jpeg" width="250"> | <img src="assets/delete_dialog.jpeg" width="250"> |
 
 ## ✨ Features
 
@@ -46,7 +45,7 @@
 ### Installation
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/lingobreeze.git
+    git clone https://github.com/Devsonar19/Lingobreeze.git
     cd lingobreeze
     ```
 2.  **Install dependencies**
