@@ -27,4 +27,9 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
     );
     await remoteDataSource.saveWordToFirebase(newWord);
   }
+
+  @override
+  Future<void> deleteWord(String id) async {
+    await remoteDataSource.deleteWordFromFirebase(id);
+  }
 }

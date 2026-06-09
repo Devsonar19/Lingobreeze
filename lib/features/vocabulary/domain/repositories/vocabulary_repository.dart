@@ -7,4 +7,5 @@ abstract class VocabularyRepository {
     required String meaning,
     required String exampleSentence,
   });
+  Future<void> deleteWord(String id);
 }

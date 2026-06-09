@@ -9,6 +9,7 @@ class VocabularyBloc extends Bloc<VocabularyEvent, VocabularyState> {
   VocabularyBloc({required this.repository}) : super(VocabularyInitial()) {
     on<FetchVocabulary>(_onFetchVocabulary);
     on<AddNewWord>(_onAddNewWord);
+    on<DeleteVocabularyWord>(_onDeleteVocabularyWord);
   }
 
   Future<void> _onFetchVocabulary(FetchVocabulary event, Emitter<VocabularyState> emit) async {
@@ -36,6 +37,15 @@ class VocabularyBloc extends Bloc<VocabularyEvent, VocabularyState> {
       add(FetchVocabulary());
     } catch (e) {
       emit(VocabularyError("Failed to save word."));
+    }
+  }
+
+  Future<void> _onDeleteVocabularyWord(DeleteVocabularyWord event, Emitter<VocabularyState> emit) async {
+    try {
+      await repository.deleteWord(event.id);
+      add(FetchVocabulary()); // Refresh the list automatically
+    } catch (e) {
+      emit(const VocabularyError("Failed to delete word. Please try again."));
     }
   }
 }

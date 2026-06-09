@@ -7,6 +7,7 @@ import '../models/word_model.dart';
 abstract class VocabularyRemoteDataSource {
   Future<List<WordModel>> fetchWordsFromNode();
   Future<void> saveWordToFirebase(WordModel word);
+  Future<void> deleteWordFromFirebase(String id);
 }
 
 class VocabularyRemoteDataSourceImpl implements VocabularyRemoteDataSource {
@@ -48,6 +49,15 @@ class VocabularyRemoteDataSourceImpl implements VocabularyRemoteDataSource {
       await firestore.collection('words').add(data);
     } catch (e) {
       throw Exception('Failed to save word directly to Firebase: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteWordFromFirebase(String id) async {
+    try {
+      await firestore.collection('words').doc(id).delete();
+    } catch (e) {
+      throw Exception('Failed to delete word: $e');
     }
   }
 }
