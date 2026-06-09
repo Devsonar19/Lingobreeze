@@ -7,7 +7,6 @@ import '../widgets/top_user_bar.dart';
 
 import '../../../vocabulary/presentation/pages/home_tab.dart';
 import '../../../vocabulary/presentation/pages/learn_tab.dart';
-import '../../../progress/presentation/pages/progress_tab.dart';
 
 class MainHomeScreen extends StatelessWidget {
   const MainHomeScreen({super.key});
@@ -15,25 +14,35 @@ class MainHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          const TopUserBar(),
-          Expanded(
-            child: BlocBuilder<NavigationCubit, NavigationTab>(
-              builder: (context, state) {
-                // Switch the body based on the selected chip
-                switch (state) {
-                  case NavigationTab.home:
-                    return const HomeTab(); // The Vocabulary List
-                  case NavigationTab.learn:
-                    return const LearnTab(); // Learn New Word Screen
-                  case NavigationTab.progress:
-                    return const ProgressTab(); // Analytics Screen
-                }
-              },
-            ),
+          Column(
+            children: [
+              const SizedBox(height: 100), // Pushes content below the floating top bar
+              Expanded(
+                child: BlocBuilder<NavigationCubit, NavigationTab>(
+                  builder: (context, state) {
+                    switch (state) {
+                      case NavigationTab.home: return const HomeTab();
+                      case NavigationTab.learn: return const LearnTab();
+                      case NavigationTab.progress: return const ProgressTab();
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 80),
+            ],
           ),
-          const BottomNavChips(),
+
+          const Positioned(
+            bottom: 0, left: 0, right: 0,
+            child: BottomNavChips(),
+          ),
+
+          const Positioned(
+            top: 0, left: 0, right: 0,
+            child: TopUserBar(),
+          ),
         ],
       ),
     );

@@ -8,6 +8,8 @@ abstract class VocabularyRemoteDataSource {
   Future<List<WordModel>> fetchWordsFromNode();
   Future<void> saveWordToFirebase(WordModel word);
   Future<void> deleteWordFromFirebase(String id);
+  Future<void> updateWordInFirebase(WordModel word);
+
 }
 
 class VocabularyRemoteDataSourceImpl implements VocabularyRemoteDataSource {
@@ -58,6 +60,18 @@ class VocabularyRemoteDataSourceImpl implements VocabularyRemoteDataSource {
       await firestore.collection('words').doc(id).delete();
     } catch (e) {
       throw Exception('Failed to delete word: $e');
+    }
+  }
+
+  @override
+  Future<void> updateWordInFirebase(WordModel word) async {
+    try {
+      final data = word.toFirestore();
+      data['userId'] = _currentUserId;
+
+      await firestore.collection('words').doc(word.id).update(data);
+    } catch (e) {
+      throw Exception('Failed to update word: $e');
     }
   }
 }

@@ -8,4 +8,10 @@ abstract class VocabularyRepository {
     required String exampleSentence,
   });
   Future<void> deleteWord(String id);
+  Future<void> updateWord({
+    required String id,
+    required String word,
+    required String meaning,
+    required String exampleSentence,
+  });
 }

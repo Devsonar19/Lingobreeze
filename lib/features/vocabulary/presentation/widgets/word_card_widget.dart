@@ -5,6 +5,8 @@ import '../bloc/vocabulary_bloc.dart';
 import '../bloc/vocabulary_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'edit_word_modal.dart';
+
 class WordCardWidget extends StatelessWidget {
   final WordEntity word;
 
@@ -83,23 +85,45 @@ class WordCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Top Row: Word and Speaker Icon
+          // Top Row: Word and Action Icons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                word.word,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
+              Expanded(
+                child: Text(
+                  word.word,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                  overflow: TextOverflow.ellipsis, // Prevents overflow if the word is too long
                 ),
               ),
-              // Replaced Speaker Icon with Delete Icon
-              IconButton(
-                icon: const Icon(Icons.delete_outline_rounded, size: 26),
-                color: Colors.redAccent.withOpacity(0.8),
-                onPressed: () {
-                  _showDeleteConfirmation(context, word);
-                },
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // NEW: Edit Button
+                  IconButton(
+                    icon: const Icon(Icons.edit_note_rounded, size: 28),
+                    color: theme.primaryColor,
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => EditWordModal(word: word),
+                      );
+                    },
+                  ),
+                  // Existing Delete Button
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline_rounded, size: 26),
+                    color: Colors.redAccent.withOpacity(0.8),
+                    onPressed: () {
+                      _showDeleteConfirmation(context, word);
+                    },
+                  ),
+                ],
               ),
             ],
           ),

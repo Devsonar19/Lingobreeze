@@ -10,6 +10,7 @@ class VocabularyBloc extends Bloc<VocabularyEvent, VocabularyState> {
     on<FetchVocabulary>(_onFetchVocabulary);
     on<AddNewWord>(_onAddNewWord);
     on<DeleteVocabularyWord>(_onDeleteVocabularyWord);
+    on<UpdateVocabularyWord>(_onUpdateVocabularyWord);
   }
 
   Future<void> _onFetchVocabulary(FetchVocabulary event, Emitter<VocabularyState> emit) async {
@@ -46,6 +47,20 @@ class VocabularyBloc extends Bloc<VocabularyEvent, VocabularyState> {
       add(FetchVocabulary()); // Refresh the list automatically
     } catch (e) {
       emit(const VocabularyError("Failed to delete word. Please try again."));
+    }
+  }
+
+  Future<void> _onUpdateVocabularyWord(UpdateVocabularyWord event, Emitter<VocabularyState> emit) async {
+    try {
+      await repository.updateWord(
+        id: event.id,
+        word: event.word,
+        meaning: event.meaning,
+        exampleSentence: event.exampleSentence,
+      );
+      add(FetchVocabulary());
+    } catch (e) {
+      emit(const VocabularyError("Failed to update word."));
     }
   }
 }

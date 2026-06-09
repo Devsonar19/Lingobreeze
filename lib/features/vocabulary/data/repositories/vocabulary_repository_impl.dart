@@ -32,4 +32,20 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
   Future<void> deleteWord(String id) async {
     await remoteDataSource.deleteWordFromFirebase(id);
   }
+
+  @override
+  Future<void> updateWord({
+    required String id,
+    required String word,
+    required String meaning,
+    required String exampleSentence,
+  }) async {
+    final updatedWord = WordModel(
+      id: id,
+      word: word,
+      meaning: meaning,
+      exampleSentence: exampleSentence,
+    );
+    await remoteDataSource.updateWordInFirebase(updatedWord);
+  }
 }

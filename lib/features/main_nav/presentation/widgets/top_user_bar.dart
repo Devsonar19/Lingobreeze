@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/theme_cubit.dart';
+import '../../../../core/theme/theme_toggle_widget.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class TopUserBar extends StatelessWidget {
   const TopUserBar({super.key});
@@ -10,7 +10,6 @@ class TopUserBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final user = FirebaseAuth.instance.currentUser;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -29,34 +28,35 @@ class TopUserBar extends StatelessWidget {
         bottom: false,
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundColor: Color(0xFF3498DB),
-              child: Icon(Icons.person, color: Colors.white),
-            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Good Morning,",
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    "Welcome Back!",
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Text(
-                    user?.displayName ?? user?.email?.split('@')[0] ?? "User",
-                    style: Theme.of(context).textTheme.titleLarge,
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      String displayName = "User";
+
+                      if (state is Authenticated && state.user.email != null) {
+                        displayName = state.user.email!.split('@')[0];
+                      }
+
+                      return Text(
+                        displayName,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      );
+                    },
                   ),
                 ],
               ),
             ),
-            IconButton(
-              icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-              color: Theme.of(context).textTheme.bodyLarge?.color,
-              onPressed: () {
-                context.read<ThemeCubit>().toggleTheme();
-              },
-            ),
+            const ThemeToggleWidget(),
             IconButton(
               icon: const Icon(Icons.logout),
               color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -122,6 +122,33 @@ class TopUserBar extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Helper for building the dropdown items
+  PopupMenuItem<ThemeMode> _buildThemeMenuItem({
+    required ThemeMode value,
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required Color primaryColor,
+    Color? textColor,
+  }) {
+    return PopupMenuItem<ThemeMode>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, color: isSelected ? primaryColor : textColor?.withOpacity(0.7)),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? primaryColor : textColor,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
       ),
     );
   }

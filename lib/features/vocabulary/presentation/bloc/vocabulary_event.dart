@@ -31,3 +31,21 @@ class DeleteVocabularyWord extends VocabularyEvent {
   @override
   List<Object> get props => [id];
 }
+
+// Add this new event class
+class UpdateVocabularyWord extends VocabularyEvent {
+  final String id;
+  final String word;
+  final String meaning;
+  final String exampleSentence;
+
+  const UpdateVocabularyWord({
+    required this.id,
+    required this.word,
+    required this.meaning,
+    required this.exampleSentence,
+  });
+
+  @override
+  List<Object> get props => [id, word, meaning, exampleSentence];
+}

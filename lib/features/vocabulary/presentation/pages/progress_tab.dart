@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/vocabulary_bloc.dart';
+import '../bloc/vocabulary_state.dart';
 
 class ProgressTab extends StatelessWidget {
   const ProgressTab({super.key});
@@ -7,37 +10,47 @@ class ProgressTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        Text(
-          "Your Progress",
-          style: theme.textTheme.headlineMedium,
-        ),
-        const SizedBox(height: 24),
-        Row(
+    return BlocBuilder<VocabularyBloc, VocabularyState>(
+      builder: (context, state) {
+        // Calculate dynamic stats
+        int totalWords = 0;
+        if (state is VocabularyLoaded) {
+          totalWords = state.words.length;
+        }
+
+        return ListView(
+          padding: const EdgeInsets.all(24),
           children: [
-            Expanded(
-              child: _buildStatCard(
-                context: context,
-                title: "Words Learned",
-                value: "0",
-                icon: Icons.library_books_rounded,
-              ),
+            Text(
+              "Your Progress",
+              style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                context: context,
-                title: "Day Streak",
-                value: "1",
-                icon: Icons.local_fire_department_rounded,
-                color: Colors.orange,
-              ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    context: context,
+                    title: "Words Learned",
+                    value: totalWords.toString(), // Dynamically injected
+                    icon: Icons.library_books_rounded,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildStatCard(
+                    context: context,
+                    title: "Day Streak",
+                    value: "1", // We can make this dynamic later
+                    icon: Icons.local_fire_department_rounded,
+                    color: Colors.orange,
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
