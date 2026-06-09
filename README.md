@@ -3,6 +3,16 @@
 
 **LingoBreeze** is a premium, beautifully crafted vocabulary building and flashcard application built with Flutter. It features a stunning "frosted glass" (glassmorphism) aesthetic, robust state management using BLoC, and seamless cloud synchronization with Firebase.
 
+## 📱 App Gallery
+
+|                     Home Screen                      |                  Learn (Flashcards)                   |                    Progress Dashboard                    |
+|:----------------------------------------------------:|:-----------------------------------------------------:|:--------------------------------------------------------:|
+|       <img src="assets/home.jpeg" width="250">       |       <img src="assets/learn.jpeg" width="250">       |       <img src="assets/progress.jpeg" width="250">       |
+
+|               Login Screen                |                     Add Word Modal                      |                   Delete Dialog                   |
+|:-----------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------:|
+| <img src="assets/login.jpeg" width="250"> |      <img src="assets/add_modal.png" width="250">       | <img src="assets/delete_dialog.jpeg" width="250"> |
+
 ## ✨ Features
 
 ### 🎨 Premium UI/UX (Glassmorphism)
