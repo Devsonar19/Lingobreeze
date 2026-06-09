@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/word_entity.dart';
 
 class WordModel extends WordEntity {
@@ -7,6 +9,28 @@ class WordModel extends WordEntity {
     required super.meaning,
     required super.exampleSentence,
   });
+
+  // NEW: Safely extracts data directly from a Firestore Document
+  factory WordModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return WordModel(
+      id: doc.id, // Grabs the auto-generated Firebase ID
+      word: data['word'] ?? '',
+      meaning: data['meaning'] ?? '',
+      exampleSentence: data['exampleSentence'] ?? '',
+    );
+  }
+
+  // Used for saving TO Firebase
+  Map<String, dynamic> toMap(String userId) {
+    return {
+      'word': word,
+      'meaning': meaning,
+      'exampleSentence': exampleSentence,
+      'userId': userId, // Crucial for keeping data private
+      'createdAt': FieldValue.serverTimestamp(), // Sorts newest first
+    };
+  }
 
   // Parse JSON from Node.js Express Server
   factory WordModel.fromJson(Map<String, dynamic> json) {

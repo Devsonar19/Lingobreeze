@@ -1,7 +1,6 @@
 import '../../domain/entities/word_entity.dart';
 import '../../domain/repositories/vocabulary_repository.dart';
 import '../datasources/vocabulary_remote_datasource.dart';
-import '../models/word_model.dart';
 
 class VocabularyRepositoryImpl implements VocabularyRepository {
   final VocabularyRemoteDataSource remoteDataSource;
@@ -10,7 +9,7 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
 
   @override
   Future<List<WordEntity>> getWords() async {
-    return await remoteDataSource.fetchWordsFromNode();
+    return await remoteDataSource.getWords();
   }
 
   @override
@@ -19,18 +18,7 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
     required String meaning,
     required String exampleSentence,
   }) async {
-    final newWord = WordModel(
-      id: '', // Firebase assigns the ID automatically
-      word: word,
-      meaning: meaning,
-      exampleSentence: exampleSentence,
-    );
-    await remoteDataSource.saveWordToFirebase(newWord);
-  }
-
-  @override
-  Future<void> deleteWord(String id) async {
-    await remoteDataSource.deleteWordFromFirebase(id);
+    await remoteDataSource.addWord(word, meaning, exampleSentence);
   }
 
   @override
@@ -40,12 +28,11 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
     required String meaning,
     required String exampleSentence,
   }) async {
-    final updatedWord = WordModel(
-      id: id,
-      word: word,
-      meaning: meaning,
-      exampleSentence: exampleSentence,
-    );
-    await remoteDataSource.updateWordInFirebase(updatedWord);
+    await remoteDataSource.updateWord(id, word, meaning, exampleSentence);
+  }
+
+  @override
+  Future<void> deleteWord(String id) async {
+    await remoteDataSource.deleteWord(id);
   }
 }

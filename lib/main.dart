@@ -34,10 +34,7 @@ void main() async {
   final firestore = FirebaseFirestore.instance;
   final httpClient = http.Client();
 
-  final remoteDataSource = VocabularyRemoteDataSourceImpl(
-    firestore: firestore,
-    client: httpClient,
-  );
+  final remoteDataSource = VocabularyRemoteDataSourceImpl();
 
   final vocabularyRepository = VocabularyRepositoryImpl(
     remoteDataSource: remoteDataSource,

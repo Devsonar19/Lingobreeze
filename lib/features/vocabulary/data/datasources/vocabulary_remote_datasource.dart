@@ -1,77 +1,70 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/word_model.dart';
 
 abstract class VocabularyRemoteDataSource {
-  Future<List<WordModel>> fetchWordsFromNode();
-  Future<void> saveWordToFirebase(WordModel word);
-  Future<void> deleteWordFromFirebase(String id);
-  Future<void> updateWordInFirebase(WordModel word);
-
+  Future<List<WordModel>> getWords();
+  Future<void> addWord(String word, String meaning, String exampleSentence);
+  Future<void> updateWord(String id, String word, String meaning, String exampleSentence);
+  Future<void> deleteWord(String id);
 }
 
 class VocabularyRemoteDataSourceImpl implements VocabularyRemoteDataSource {
-  final FirebaseFirestore firestore;
-  final http.Client client;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
-  // NOTE: Keep your existing 192.168.x.x IP address here!
-  final String nodeBaseUrl = 'http://192.168.29.217:3000';
-
-  VocabularyRemoteDataSourceImpl({required this.firestore, required this.client});
-
-  // Helper method to grab the current user's ID
-  String get _currentUserId {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) throw Exception("User is not logged in");
+  // Helper to ensure user is logged in
+  String get _userId {
+    final user = auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
     return user.uid;
   }
 
   @override
-  Future<List<WordModel>> fetchWordsFromNode() async {
-    // Attach the userId to the end of the URL
-    final response = await client.get(Uri.parse('$nodeBaseUrl/words?userId=$_currentUserId'));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => WordModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load words from Node API');
-    }
-  }
-
-  @override
-  Future<void> saveWordToFirebase(WordModel word) async {
+  Future<List<WordModel>> getWords() async {
     try {
-      // Convert the word to a map and inject the userId stamp
-      final data = word.toFirestore();
-      data['userId'] = _currentUserId;
+      // Only fetch words belonging to the current user, sorted by newest
+      final snapshot = await firestore
+          .collection('words')
+          .where('userId', isEqualTo: _userId)
+          .orderBy('createdAt', descending: true)
+          .get();
 
-      await firestore.collection('words').add(data);
+      return snapshot.docs.map((doc) => WordModel.fromFirestore(doc)).toList();
     } catch (e) {
-      throw Exception('Failed to save word directly to Firebase: $e');
+      throw Exception('Failed to fetch words from Firebase: $e');
     }
   }
 
   @override
-  Future<void> deleteWordFromFirebase(String id) async {
+  Future<void> addWord(String word, String meaning, String exampleSentence) async {
+    try {
+      final newWord = WordModel(id: '', word: word, meaning: meaning, exampleSentence: exampleSentence);
+      await firestore.collection('words').add(newWord.toMap(_userId));
+    } catch (e) {
+      throw Exception('Failed to add word to Firebase: $e');
+    }
+  }
+
+  @override
+  Future<void> updateWord(String id, String word, String meaning, String exampleSentence) async {
+    try {
+      await firestore.collection('words').doc(id).update({
+        'word': word,
+        'meaning': meaning,
+        'exampleSentence': exampleSentence,
+      });
+    } catch (e) {
+      throw Exception('Failed to update word in Firebase: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteWord(String id) async {
     try {
       await firestore.collection('words').doc(id).delete();
     } catch (e) {
-      throw Exception('Failed to delete word: $e');
-    }
-  }
-
-  @override
-  Future<void> updateWordInFirebase(WordModel word) async {
-    try {
-      final data = word.toFirestore();
-      data['userId'] = _currentUserId;
-
-      await firestore.collection('words').doc(word.id).update(data);
-    } catch (e) {
-      throw Exception('Failed to update word: $e');
+      throw Exception('Failed to delete word from Firebase: $e');
     }
   }
 }
