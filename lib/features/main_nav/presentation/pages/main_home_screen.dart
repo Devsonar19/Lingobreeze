@@ -47,16 +47,25 @@ class MainHomeScreen extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<NavigationCubit, NavigationTab>(
                   builder: (context, state) {
-                    // Smooth Transition Engine
                     return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
+                      duration: const Duration(milliseconds: 400), // Slightly longer for premium feel
+                      switchInCurve: Curves.easeOutCubic, // Starts fast, slows down smoothly
+                      switchOutCurve: Curves.easeInCubic, // Slowly accelerates out
                       transitionBuilder: (Widget child, Animation<double> animation) {
+
+                        // 1. The Fade Effect
+                        final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(animation);
+
+                        // 2. The Slide Effect (Slides up slightly from the bottom)
+                        final slideAnimation = Tween<Offset>(
+                          begin: const Offset(0.0, 0.05), // Starts 5% lower
+                          end: Offset.zero, // Ends exactly in position
+                        ).animate(animation);
+
                         return FadeTransition(
-                          opacity: animation,
-                          child: ScaleTransition(
-                            scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
+                          opacity: fadeAnimation,
+                          child: SlideTransition(
+                            position: slideAnimation,
                             child: child,
                           ),
                         );
