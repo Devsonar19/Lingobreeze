@@ -24,28 +24,29 @@ class GlassContainer extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
-          // The magic blur effect
           filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              // Translucent fill
+              // Slightly more opaque in light mode so it doesn't wash out
               color: isDark
                   ? Colors.white.withOpacity(0.05)
-                  : Colors.white.withOpacity(0.4),
+                  : Colors.white.withOpacity(0.65),
               borderRadius: BorderRadius.circular(borderRadius),
-              // The subtle light refraction border
               border: Border.all(
                 color: isDark
                     ? Colors.white.withOpacity(0.1)
-                    : Colors.white.withOpacity(0.6),
+                    : Colors.white.withOpacity(1), // Stronger highlight on the top edge
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  // INCREASED opacity for light mode from 0.05 to 0.12
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.25),
+                  blurRadius: 30,
+                  // NEW: spreadRadius helps push the shadow out from under the card
+                  spreadRadius: isDark ? 0 : 2,
+                  offset: const Offset(0, 12),
                 )
               ],
             ),

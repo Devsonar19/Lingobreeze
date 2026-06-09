@@ -19,45 +19,58 @@ class WordCardWidget extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          backgroundColor: dialogTheme.cardColor,
-          title: Text(
-            "Delete Word",
-            style: dialogTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            "Are you sure you want to delete '${word.word}'? This cannot be undone.",
-            style: dialogTheme.textTheme.bodyLarge,
-          ),
-          actionsPadding: const EdgeInsets.only(right: 16, bottom: 16),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(
-                "Cancel",
-                style: TextStyle(color: dialogTheme.textTheme.bodyMedium?.color, fontSize: 16),
-              ),
+        return Dialog(
+          backgroundColor: Colors.transparent, // Hides default solid box
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: GlassContainer(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.delete_forever_rounded, size: 48, color: Colors.redAccent.withOpacity(0.8)),
+                const SizedBox(height: 16),
+                Text(
+                  "Delete Word",
+                  style: dialogTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Are you sure you want to delete '${word.word}'? This cannot be undone.",
+                  style: dialogTheme.textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text("Cancel", style: TextStyle(color: dialogTheme.textTheme.bodyMedium?.color, fontSize: 16)),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
+                          context.read<VocabularyBloc>().add(DeleteVocabularyWord(word.id));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          elevation: 8,
+                          shadowColor: Colors.redAccent.withOpacity(0.4),
+                        ),
+                        child: const Text("Delete", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                // 1. Close the dialog
-                Navigator.pop(dialogContext);
-                // 2. Trigger the delete event in the BLoC using the word's ID
-                context.read<VocabularyBloc>().add(DeleteVocabularyWord(word.id));
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                elevation: 0,
-              ),
-              child: const Text(
-                "Delete",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-          ],
+          ),
         );
       },
     );
@@ -90,20 +103,26 @@ class WordCardWidget extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // NEW: Edit Button
+                  // Edit Button
                   IconButton(
                     icon: const Icon(Icons.edit_note_rounded, size: 28),
                     color: theme.primaryColor,
                     onPressed: () {
+                      final vocabBloc = context.read<VocabularyBloc>();
+
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) =>   EditWordModal(word: word),
+                        backgroundColor: Colors.transparent, // CRITICAL: Allows the glass to show!
+                        elevation: 0,
+                        builder: (context) => BlocProvider.value(
+                          value: vocabBloc,
+                          child: EditWordModal(word: word),
+                        ),
                       );
                     },
                   ),
-                  // Existing Delete Button
+                  // Delete Button
                   IconButton(
                     icon: const Icon(Icons.delete_outline_rounded, size: 26),
                     color: Colors.redAccent.withOpacity(0.8),

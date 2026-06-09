@@ -32,6 +32,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       body: BlocBuilder<VocabularyBloc, VocabularyState>(
         builder: (context, state) {
@@ -66,9 +67,17 @@ class _HomeTabState extends State<HomeTab> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddWordModal(context),
-        backgroundColor: const Color(0xFF3498DB),
-        child: const Icon(Icons.add, color: Colors.white, size: 28),
+        backgroundColor: theme.primaryColor,
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true, // Allows the sheet to move up with the keyboard
+            backgroundColor: Colors.transparent, // CRITICAL: This allows the glass to blur the background!
+            elevation: 0, // Removes the default hard shadow
+            builder: (context) => const AddWordModal(),
+          );
+        },
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
