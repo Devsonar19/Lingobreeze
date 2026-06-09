@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/theme_cubit.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TopUserBar extends StatelessWidget {
   const TopUserBar({super.key});
@@ -8,6 +10,7 @@ class TopUserBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final user = FirebaseAuth.instance.currentUser;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -41,7 +44,7 @@ class TopUserBar extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Text(
-                    "Dev", // We can make this dynamic later with your Auth feature
+                    user?.displayName ?? user?.email?.split('@')[0] ?? "User",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ],
@@ -58,7 +61,63 @@ class TopUserBar extends StatelessWidget {
               icon: const Icon(Icons.logout),
               color: Theme.of(context).textTheme.bodyLarge?.color,
               onPressed: () {
-                // TODO: Trigger Auth Bloc Logout Event
+                // Show the premium confirmation dialog
+                showDialog(
+                  context: context,
+                  builder: (BuildContext dialogContext) {
+                    final dialogTheme = Theme.of(context);
+
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24), // Matches your card styling
+                      ),
+                      backgroundColor: dialogTheme.cardColor,
+                      title: Text(
+                        "Log Out",
+                        style: dialogTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      content: Text(
+                        "Are you sure you want to log out of LingoBreeze?",
+                        style: dialogTheme.textTheme.bodyLarge,
+                      ),
+                      actionsPadding: const EdgeInsets.only(right: 16, bottom: 16),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(dialogContext), // Just close the dialog
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(
+                              color: dialogTheme.textTheme.bodyMedium?.color,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(dialogContext); // Close the dialog first
+                            context.read<AuthBloc>().add(LogoutRequested()); // Then trigger the logout event
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent, // Highlights the destructive action
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            "Log Out",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           ],

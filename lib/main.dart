@@ -18,6 +18,9 @@ import 'features/vocabulary/data/repositories/vocabulary_repository_impl.dart';
 import 'features/vocabulary/presentation/bloc/vocabulary_bloc.dart';
 import 'firebase_options.dart';
 
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/auth/presentation/pages/login_screen.dart';
+
 void main() async {
   // 1. Ensure Flutter is ready before calling native code
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,9 +62,8 @@ class LingoBreezeApp extends StatelessWidget {
       providers: [
         BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
         BlocProvider<NavigationCubit>(create: (_) => NavigationCubit()),
-        BlocProvider<VocabularyBloc>(
-          create: (_) => VocabularyBloc(repository: vocabularyRepository),
-        ),
+        BlocProvider<VocabularyBloc>(create: (_) => VocabularyBloc(repository: vocabularyRepository)),
+        BlocProvider<AuthBloc>(create: (_) => AuthBloc()..add(CheckAuthStatus())),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
@@ -71,7 +73,16 @@ class LingoBreezeApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeMode,
-            home: const MainHomeScreen(),
+            home: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                // If they are logged in, show the app
+                if (state is Authenticated) {
+                  return const MainHomeScreen();
+                }
+
+                return const LoginScreen();
+              },
+            ),
           );
         },
       ),

@@ -1,0 +1,153 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/auth_bloc.dart';
+import 'register_screen.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthError) {
+            _showErrorDialog(context, state.message);
+          }
+        },
+        builder: (context, state) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 60),
+                    Icon(Icons.cloud_circle_rounded, size: 80, color: theme.primaryColor),
+                    const SizedBox(height: 24),
+                    Text(
+                      "Welcome to LingoBreeze",
+                      style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Sign in to continue your journey.",
+                      style: theme.textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 40),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(labelText: "Email", prefixIcon: Icon(Icons.email_outlined)),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (val) => val != null && val.isNotEmpty ? null : "Enter your email",
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(labelText: "Password", prefixIcon: Icon(Icons.lock_outline)),
+                      obscureText: true,
+                      validator: (val) => val != null && val.isNotEmpty ? null : "Enter your password",
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: state is AuthLoading
+                          ? null
+                          : () {
+                        if (_formKey.currentState!.validate()) {
+                          context.read<AuthBloc>().add(
+                            LoginRequested(
+                              _emailController.text.trim(),
+                              _passwordController.text.trim(),
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.primaryColor,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: state is AuthLoading
+                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                          : const Text("Sign In", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                    ),
+                    const SizedBox(height: 24),
+                    // Navigation to Register Screen
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                        );
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Don't have an account? ",
+                          style: theme.textTheme.bodyMedium,
+                          children: [
+                            TextSpan(
+                              text: "Sign Up",
+                              style: TextStyle(color: theme.primaryColor, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Drop this at the bottom of your UI files
+void _showErrorDialog(BuildContext context, String message) {
+  final theme = Theme.of(context);
+
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      backgroundColor: theme.cardColor,
+      title: Row(
+        children: [
+          const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 28),
+          const SizedBox(width: 12),
+          Text("Oops!", style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+        ],
+      ),
+      content: Text(message, style: theme.textTheme.bodyLarge),
+      actionsPadding: const EdgeInsets.only(right: 16, bottom: 16),
+      actions: [
+        ElevatedButton(
+          onPressed: () => Navigator.pop(ctx),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: theme.primaryColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: const Text("Try Again", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        ),
+      ],
+    ),
+  );
+}

@@ -54,32 +54,32 @@ class WordCardWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF2ECC71), // The mint green highlight
+              color: const Color(0xFF2ECC71),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               word.meaning,
               style: const TextStyle(
-                color: Colors.black87, // Dark text for contrast on green
+                color: Colors.black87,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
             ),
           ),
 
-          const SizedBox(height: 20),
-          Divider(color: theme.dividerColor.withOpacity(isDark ? 0.1 : 0.2), height: 1),
-          const SizedBox(height: 16),
-
-          // The Example Sentence
-          Text(
-            word.exampleSentence,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontStyle: FontStyle.italic,
-              color: theme.textTheme.bodyMedium?.color, // Subtle secondary color
-              height: 1.4,
+          if (word.exampleSentence.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Divider(color: theme.dividerColor.withOpacity(isDark ? 0.1 : 0.2), height: 1),
+            const SizedBox(height: 16),
+            Text(
+              word.exampleSentence,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontStyle: FontStyle.italic,
+                color: theme.textTheme.bodyMedium?.color,
+                height: 1.4,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
