@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/theme/glass_container.dart';
 import '../cubit/navigation_cubit.dart';
 
 class BottomNavChips extends StatelessWidget {
@@ -9,25 +10,24 @@ class BottomNavChips extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<NavigationCubit, NavigationTab>(
       builder: (context, currentTab) {
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-          child: SafeArea(
-            top: false,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildChip(context, "Home", Icons.home_rounded, NavigationTab.home, currentTab),
-                _buildChip(context, "Learn", Icons.school_rounded, NavigationTab.learn, currentTab),
-                _buildChip(context, "Progress", Icons.bar_chart_rounded, NavigationTab.progress, currentTab),
-              ],
-            ),
+        // Replaced solid Container with GlassContainer
+        return GlassContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          borderRadius: 40, // Pill shape
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildChip(context, NavigationTab.home, Icons.home_rounded, "Home", currentTab),
+              _buildChip(context, NavigationTab.learn, Icons.school_rounded, "Learn", currentTab),
+              _buildChip(context, NavigationTab.progress, Icons.bar_chart_rounded, "Progress", currentTab),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _buildChip(BuildContext context, String label, IconData icon, NavigationTab tab, NavigationTab currentTab) {
+  Widget _buildChip(BuildContext context, NavigationTab tab, IconData icon, String label, NavigationTab currentTab) {
     final isSelected = tab == currentTab;
     final theme = Theme.of(context);
 

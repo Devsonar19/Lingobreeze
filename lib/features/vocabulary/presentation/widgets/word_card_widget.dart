@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:lingobreeze_app/core/theme/glass_container.dart';
 import '../../domain/entities/word_entity.dart';
 import '../bloc/vocabulary_bloc.dart';
 import '../bloc/vocabulary_event.dart';
@@ -67,25 +68,12 @@ class WordCardWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
+    return GlassContainer(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(24), // Smooth, premium rounding
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.4 : 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Row: Word and Speaker Icon
-          // Top Row: Word and Action Icons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -111,7 +99,7 @@ class WordCardWidget extends StatelessWidget {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder: (context) => EditWordModal(word: word),
+                        builder: (context) =>   EditWordModal(word: word),
                       );
                     },
                   ),
